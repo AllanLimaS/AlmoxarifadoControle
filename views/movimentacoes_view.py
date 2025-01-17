@@ -1,25 +1,35 @@
 import flet as ft
-from database.db import db_buscar_pessoas, db_buscar_itens, db_adicionar_movimentacao, db_buscar_movimentacoes
+from database.db import db_buscar_pessoas, db_buscar_itens,db_buscar_item,db_diminuir_saldo_item, db_adicionar_movimentacao, db_buscar_movimentacoes
 
-alert = ft.AlertDialog(title=ft.Text("Item Cadastrado com Sucesso!"))
+alert = ft.AlertDialog(title=ft.Text("Movimento Cadastrado com Sucesso!"))
 
 
 def cadastrar_movimentacao(e):
-    if selected_pessoa.value and selected_item.value and qtd_textfield.value:
-        db_adicionar_movimentacao(
-            pessoa_id=selected_pessoa.value,
-            item_id=selected_item.value,
-            quantidade=int(qtd_textfield.value)
-        )
-        e.page.overlay.append(alert)
-        alert.open = True
+    if selected_pessoa.value and selected_item.value and int(qtd_textfield.value) > 0:
+
+        # Verifica se o Item possui estoque suficiente         
+        item = db_buscar_item(selected_item.value)
+        item_qtd = item[0][2]
+        if(item_qtd >= int(qtd_textfield.value)):
+
+            db_adicionar_movimentacao(
+                pessoa_id=selected_pessoa.value,
+                item_id=selected_item.value,
+                quantidade=int(qtd_textfield.value)
+            )
+            alert.title = ft.Text("Movimento Cadastrado com Sucesso!", color=ft.Colors.GREEN)
+            db_diminuir_saldo_item(selected_item.value,int(qtd_textfield.value))
+        else:   
+            alert.title = ft.Text("Saldo do item insuficiente!", color=ft.Colors.RED)
 
         e.page.main_container.content = movimentacoes_view()
-        e.page.update()
     else:
-        e.page.overlay.append(alert)
-        alert.open = True
-        e.page.update()
+        alert.title = ft.Text("Preencha corretamente os campos!", color=ft.Colors.RED)
+    
+    e.control.page.overlay.clear()
+    e.page.overlay.append(alert)
+    alert.open = True
+    e.page.update()
 
 def carregar_movimentacoes():
     dataTable = ft.DataTable(
@@ -44,7 +54,7 @@ def carregar_movimentacoes():
             )
         )
 
-    return ft.Column(controls=[dataTable], scroll=ft.ScrollMode.AUTO, height=400)
+    return ft.Column(controls=[dataTable], scroll=ft.ScrollMode.AUTO, height=650)
 
 def movimentacoes_view():
     global selected_pessoa, selected_item, qtd_textfield

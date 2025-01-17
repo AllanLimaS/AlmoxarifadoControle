@@ -1,9 +1,11 @@
 import flet as ft
 
-from database.db import db_adicionar_item, db_buscar_itens, db_deletar_item
+from database.db import db_adicionar_item, db_buscar_itens, db_deletar_item, db_alterar_saldo_item
 
 nome_textfield = ft.TextField(label="Nome do Item")
 qtd_textfield = ft.TextField(label="Quantidade", input_filter=ft.NumbersOnlyInputFilter())
+qtd_new_textfield = ft.TextField(label="Nova Quantidade", input_filter=ft.NumbersOnlyInputFilter())
+
 
 alert = ft.AlertDialog(title=ft.Text("Item Cadastrado com Sucesso!"))
 
@@ -15,17 +17,50 @@ alert_confirm = ft.AlertDialog(
                  ft.TextButton("No", on_click=lambda e: close_confirm(e))]
     )
 
+alert_alterar = ft.AlertDialog(
+        modal=True,
+        title=ft.Text("Alterar estoque de Item"),
+        actions_alignment=ft.MainAxisAlignment.END,
+        actions=[ft.TextButton("Yes", on_click=lambda e: alterar_item(e)),
+                 ft.TextButton("No", on_click=lambda e: close_alterar(e))]
+    )
+
 def close_confirm(e):
     alert_confirm.open = False
     e.control.page.update()
+
+def close_alterar(e):
+    alert_alterar.open = False
+    e.control.page.update()
+
+def alterar_item(e):
+    
+    try:
+        db_alterar_saldo_item(id_item_aux,qtd_new_textfield.value)
+        e.control.page.overlay.clear()
+        e.control.page.overlay.append(alert)
+        alert.title = ft.Text("Item alterado com Sucesso!", color=ft.Colors.GREEN)
+        alert.open = True
+
+        # Atualiza a visualização dos itens
+        e.page.main_container.content = itens_view()
+        e.page.update()
+    except Exception as ex:
+        # Exibe uma mensagem de erro e registra o problema
+        alert.title = ft.Text(f"Erro ao alterar o item: {ex}", color=ft.Colors.RED)
+        e.control.page.overlay.clear()
+        e.control.page.overlay.append(alert)
+        alert.open = True
+        e.control.page.update()
+        print(f"Erro ao deletar o item: {ex}")
 
 def deletar_item(e):
 
     try:
         db_deletar_item(id_item_aux)  # Tenta deletar o item do banco de dados
+        e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
         alert.title = ft.Text("Item Deletado com Sucesso!", color=ft.Colors.GREEN)
-        e.control.page.overlay.append(alert)
         alert.open = True
 
         # Atualiza a visualização dos itens
@@ -34,19 +69,36 @@ def deletar_item(e):
     except Exception as ex:
         # Exibe uma mensagem de erro e registra o problema
         alert.title = ft.Text(f"Erro ao deletar o item: {ex}", color=ft.Colors.RED)
+        e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
         alert.open = True
         e.control.page.update()
-        print(f"Erro ao deletar o item: {ex}")  # Ou use um sistema de logs
+        print(f"Erro ao deletar o item: {ex}")
 
 def abrir_confirm(e,item_id,nome_item):
 
     global id_item_aux 
     id_item_aux = item_id
     alert_confirm.content = ft.Text(f"Deseja deletar o item '{nome_item}'?")
-
+    e.control.page.overlay.clear()
     e.control.page.overlay.append(alert_confirm)
     alert_confirm.open = True
+    e.control.page.update()
+
+def abrir_alterar(e,item_id,item_nome,item_qtd):
+
+    global id_item_aux 
+    id_item_aux = item_id
+
+    qtd_new_textfield.value = ''
+
+    alert_alterar.content = ft.Column(controls=[
+                                ft.Text(f"O item '{item_nome}' possui '{item_qtd}' unidades."),
+                                qtd_new_textfield],
+                                height=100)  
+    e.control.page.overlay.clear()
+    e.control.page.overlay.append(alert_alterar)
+    alert_alterar.open = True
     e.control.page.update()
 
 def carregar_itens():
@@ -55,7 +107,8 @@ def carregar_itens():
         columns=[
             ft.DataColumn(ft.Text("Nome")),
             ft.DataColumn(ft.Text("Quantidade"),numeric=True),
-            ft.DataColumn(ft.Text(""))
+            ft.DataColumn(ft.Text("")), # espaço para o botão de alterar 
+            ft.DataColumn(ft.Text("")) # espaço para o botão de excluir
         ]
     )
 
@@ -74,6 +127,11 @@ def carregar_itens():
                     ft.DataCell(ft.Text(nome_item)),
                     ft.DataCell(ft.Text(quantidade)),
                     ft.DataCell(ft.IconButton(
+                        icon=ft.Icons.CREATE,
+                        tooltip="Alterar item",
+                        on_click=lambda e, item_id=item_id,nome_item = nome_item,quantidade = quantidade: abrir_alterar(e, item_id,nome_item,quantidade)
+                        )),
+                    ft.DataCell(ft.IconButton(
                         icon=ft.Icons.DELETE_OUTLINED,
                         tooltip="Deletar item",
                         on_click=lambda e, item_id=item_id,nome_item = nome_item: abrir_confirm(e, item_id,nome_item)
@@ -87,7 +145,7 @@ def carregar_itens():
     gridItens = ft.Column(
         controls=[dataTable],
         scroll=ft.ScrollMode.AUTO,  # Permite scroll
-        height=400  # Defina a altura para ativar o scroll
+        height=650  # Defina a altura para ativar o scroll
     )
     return gridItens
 
@@ -101,6 +159,7 @@ def cadastra_item(e):
         qtd_textfield.value = ''
 
         alert.title = ft.Text("Item Cadastrado com Sucesso!", color=ft.Colors.GREEN)
+        e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
         alert.open = True
 
@@ -110,6 +169,7 @@ def cadastra_item(e):
     else:
 
         alert.title = ft.Text("Necessário preencher corretamente os campos!",color=ft.Colors.RED)
+        e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
         alert.open = True
         e.control.page.update()

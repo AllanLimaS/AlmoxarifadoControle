@@ -21,9 +21,9 @@ def close_confirm(e):
 def deletar_pessoa(e):
     try:
         db_deletar_pessoa(id_pessoa_aux)  # Tenta deletar o item do banco de dados
+        e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
         alert.title = ft.Text("pessoa Deletado com Sucesso!", color=ft.Colors.GREEN)
-        e.control.page.overlay.append(alert)
         alert.open = True
 
         # Atualiza a visualização dos itens
@@ -32,6 +32,7 @@ def deletar_pessoa(e):
     except Exception as ex:
         # Exibe uma mensagem de erro e registra o problema
         alert.title = ft.Text(f"Erro ao deletar a pessoa: {ex}", color=ft.Colors.RED)
+        e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
         alert.open = True
         e.control.page.update()
@@ -43,6 +44,7 @@ def abrir_confirm(e,pessoa_id,pessoa_nome):
     id_pessoa_aux = pessoa_id
     alert_confirm.content = ft.Text(f"Deseja deletar o item '{pessoa_nome}'?")
 
+    e.control.page.overlay.clear()
     e.control.page.overlay.append(alert_confirm)
     alert_confirm.open = True
     e.control.page.update()
@@ -82,7 +84,7 @@ def carregar_pessoas():
     gridPessoas = ft.Column(
         controls=[dataTable],
         scroll=ft.ScrollMode.AUTO,  # Permite scroll
-        height=400  # Defina a altura para ativar o scroll
+        height=650  # Defina a altura para ativar o scroll
     )
     return gridPessoas
 
@@ -94,8 +96,9 @@ def cadastra_pessoa(e):
         db_adicionar_pessoa(nome_textfield.value)
         nome_textfield.value = ''
 
-        alert.title = ft.Text("Pessoa Cadastrada com Sucesso!", color=ft.Colors.GREEN)
+        e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
+        alert.title = ft.Text("Pessoa Cadastrada com Sucesso!", color=ft.Colors.GREEN)
         alert.open = True
 
         e.page.main_container.content = pessoas_view()
@@ -103,8 +106,9 @@ def cadastra_pessoa(e):
 
     else:
 
-        alert.title = ft.Text("Necessário preencher corretamente os campos!",color=ft.Colors.RED)
+        e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
+        alert.title = ft.Text("Necessário preencher corretamente os campos!",color=ft.Colors.RED)
         alert.open = True
         e.control.page.update()
         
