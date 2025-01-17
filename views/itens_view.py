@@ -31,7 +31,6 @@ def deletar_item(e):
         # Atualiza a visualização dos itens
         e.page.main_container.content = itens_view()
         e.page.update()
-        print("etapa 6")
     except Exception as ex:
         # Exibe uma mensagem de erro e registra o problema
         alert.title = ft.Text(f"Erro ao deletar o item: {ex}", color=ft.Colors.RED)
@@ -39,14 +38,11 @@ def deletar_item(e):
         alert.open = True
         e.control.page.update()
         print(f"Erro ao deletar o item: {ex}")  # Ou use um sistema de logs
-    print("etapa 4")
-    
 
 def abrir_confirm(e,item_id,nome_item):
 
     global id_item_aux 
     id_item_aux = item_id
-    print(id_item_aux)
     alert_confirm.content = ft.Text(f"Deseja deletar o item '{nome_item}'?")
 
     e.control.page.overlay.append(alert_confirm)

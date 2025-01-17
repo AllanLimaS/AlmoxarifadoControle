@@ -4,6 +4,7 @@ from database.db import criar_tabelas
 
 from views.pessoas_view import pessoas_view
 from views.itens_view import itens_view
+from views.movimentacoes_view import movimentacoes_view
 
 main_container = ft.Container()
 
@@ -40,6 +41,8 @@ def main(page:ft.Page):
             page.main_container.content = itens_view()
         elif e.control.data == 'usuario':
             page.main_container.content = pessoas_view()
+        elif e.control.data == 'movimentacoes':
+            page.main_container.content = movimentacoes_view()
 
         page.update()
 
@@ -48,6 +51,8 @@ def main(page:ft.Page):
         controls=[
             ft.TextButton("Cadastro de item", data ='item', on_click=AtualizarHome,icon=ft.Icons.CREATE),
             ft.TextButton("Cadastro de usuário", data = 'usuario', on_click=AtualizarHome,icon=ft.Icons.PERSON),
+            ft.TextButton("Movimentações", data = 'movimentacoes', on_click=AtualizarHome,icon=ft.Icons.PANORAMA_PHOTOSPHERE_OUTLINED),
+
             ft.IconButton(
                     on_click=lambda e: page.window_close(),
                     icon='CLOSE',
