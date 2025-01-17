@@ -1,25 +1,13 @@
-# Arquivos de configuração locais
+/build/
 .vscode/
 .idea/
-
-# Ambientes virtuais
 venv/
 .env/
-
-# Arquivos Python compilados
 *.pyc
 __pycache__/
-
-# Banco de dados SQLite
 *.db
-
-# Logs e arquivos temporários
 *.log
 *.tmp
-
-# Arquivos de sistema
 .DS_Store
 Thumbs.db
-
-# Configurações específicas de Flet
 flet.log
