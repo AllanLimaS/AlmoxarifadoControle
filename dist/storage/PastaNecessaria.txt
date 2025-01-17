@@ -1,0 +1,1 @@
+Nesta pasta será salvo o arquivo de banco de dados do aplicativo.
