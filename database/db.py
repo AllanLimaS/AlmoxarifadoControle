@@ -1,4 +1,16 @@
 import sqlite3
+import os
+
+def verificar_ou_criar_pasta():
+    pasta = "storage"
+
+    # Verificar se a pasta já existe
+    if not os.path.exists(pasta):
+        # Se não existir, cria a pasta
+        os.makedirs(pasta)
+        print(f"A pasta '{pasta}' foi criada.")
+    else:
+        print(f"A pasta '{pasta}' já existe.")
 
 # Função para conectar ao banco de dados
 def conectar_db():
@@ -12,6 +24,9 @@ def conectar_db():
 
 # Função para criar as tabelas
 def criar_tabelas():
+
+    verificar_ou_criar_pasta()
+    
     try:
         conn = conectar_db()
         cursor = conn.cursor()

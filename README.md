@@ -11,10 +11,6 @@ Aplicativo simples de controle de almoxarifado produzido por conta de dois objet
 - CRuD de pessoa.
 - CRud de movimentação de item por pessoa. (saída de item) 
 
-## Executar 
-
-Para que o aplicativo funcione, é necessário ter uma pasta "storage" no local do executável, para que seja criado o arquivo de banco de dados. 
-
 ## Criar executável 
 
 - Criar completamente do zero
