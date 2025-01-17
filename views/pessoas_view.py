@@ -1,6 +1,6 @@
 import flet as ft
 
-from database.db import db_adicionar_pessoa, db_buscar_pessoas, db_deletar_pessoa
+from database.db_pessoas import *
 
 nome_textfield = ft.TextField(label="Nome da Pessoa")
 

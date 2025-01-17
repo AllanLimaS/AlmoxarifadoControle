@@ -1,5 +1,8 @@
 import flet as ft
-from database.db import db_buscar_pessoas, db_buscar_itens,db_buscar_item,db_diminuir_saldo_item, db_adicionar_movimentacao, db_buscar_movimentacoes
+
+from database.db_movimentacoes import *
+from database.db_itens import db_buscar_itens,db_buscar_item,db_diminuir_saldo_item
+from database.db_pessoas import db_buscar_pessoas
 
 alert = ft.AlertDialog(title=ft.Text("Movimento Cadastrado com Sucesso!"))
 

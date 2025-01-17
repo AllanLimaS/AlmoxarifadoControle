@@ -1,6 +1,6 @@
 import flet as ft
 
-from database.db import db_adicionar_item, db_buscar_itens, db_deletar_item, db_alterar_saldo_item
+from database.db_itens import *
 
 nome_textfield = ft.TextField(label="Nome do Item")
 qtd_textfield = ft.TextField(label="Quantidade", input_filter=ft.NumbersOnlyInputFilter())
