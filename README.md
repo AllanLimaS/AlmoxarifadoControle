@@ -21,5 +21,5 @@ pyinstaller app.spec
 ## To Do
 
 - Ajustar para modelo MVC
-- Melhorar a persistencia de dados
+- Fazer a persistencia de dados online, utilizando algo como o firebase
 - ajustar os "views" para ficarem mais organizados como o "moviementacoes_view.py"

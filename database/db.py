@@ -31,6 +31,16 @@ def criar_tabelas():
         conn = conectar_db()
         cursor = conn.cursor()
 
+        # Criar tabela de usuário para login 
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS usuario (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            login TEXT NOT NULL UNIQUE,
+            senha TEXT NOT NULL
+        );
+        """)
+        
+        
         # Criar tabela de itens
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS itens (

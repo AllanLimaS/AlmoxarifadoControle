@@ -2,6 +2,7 @@ import flet as ft
 
 from database.db import criar_tabelas
 
+from views.login_view import login_view
 from views.pessoas_view import pessoas_view
 from views.itens_view import itens_view
 from views.movimentacoes_view import movimentacoes_view
@@ -13,20 +14,19 @@ def main(page:ft.Page):
     criar_tabelas()
 
     page.main_container = ft.Container(
-        content=itens_view(),
+        content=login_view(),
         expand=True,
         padding=20,
-        border_radius=15
+        border_radius=15,
+        alignment=ft.alignment.center
     )
     page.title = 'Controle de Estoque'
     page.window.maximized = True
-    #page.window.title_bar_hidden = True
     page.padding = 0 
-
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
     def AtualizarHome(e):
-
         # verifica visual dos botões 
-        for btn in menubar.controls:
+        for btn in page.menubar.controls:
             if isinstance(btn, ft.TextButton):
                 if btn.data == e.control.data:
                     btn.disabled = True
@@ -45,7 +45,7 @@ def main(page:ft.Page):
 
         page.update()
 
-    menubar = ft.Row( 
+    page.menubar = ft.Row( 
         alignment=ft.MainAxisAlignment.CENTER,
         controls=[
             ft.TextButton("Itens", data ='item', on_click=AtualizarHome,icon=ft.Icons.FORMAT_LIST_NUMBERED_RTL_OUTLINED),
@@ -62,11 +62,12 @@ def main(page:ft.Page):
         ]
     )
 
+    page.menubar.visible = False
 
     page.add(
         ft.Column(
             controls=[
-                menubar,
+                page.menubar,
                 page.main_container
             ]
         )
