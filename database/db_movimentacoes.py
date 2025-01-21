@@ -28,11 +28,12 @@ def db_adicionar_movimentacao(pessoa_id, item_id, qtd, obs):
         conn.close()
 
 # Função para buscar movimentações
-def db_buscar_movimentacoes():
+def db_buscar_movimentacoes(filtro_pessoa=0, filtro_item=0):
     try:
         conn = conectar_db()
         cursor = conn.cursor()
 
+        params = []
         query = """
         SELECT 
             m.id,
@@ -44,9 +45,19 @@ def db_buscar_movimentacoes():
         FROM movimentacoes m
         INNER JOIN pessoas p ON m.pessoa_id = p.id
         INNER JOIN itens i ON m.item_id = i.id
-        ORDER BY m.data DESC
+        WHERE 1=1
         """
-        cursor.execute(query)
+
+        if int(filtro_pessoa) > 0:
+            query += " AND m.pessoa_id = ?"
+            params.append(filtro_pessoa)
+        if int(filtro_item) > 0:
+            query += " AND m.item_id = ?"
+            params.append(filtro_item)
+
+        query += " ORDER BY m.data DESC"
+        
+        cursor.execute(query, params)
         movimentacoes = cursor.fetchall()
         print("[DB] SUCESSO - Buscar movimentacoes")
         return movimentacoes
