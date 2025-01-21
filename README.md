@@ -4,6 +4,8 @@ Aplicativo simples de controle de almoxarifado produzido por conta de dois objet
  - Praticar criação de aplicações com interfaces gráficas utilizando o framework Flet.
  - Solicitação da ferramenta por um familiar próximo.
 
+ Como o aplicativo será utilizado por apenas uma pessoa, foi criada uma atenticação para apenas um usuário.
+
 ## Funcionalidades
 ![Demonstração](https://github.com/AllanLimaS/AlmoxarifadoControle/blob/master/assets/demonstracao_gif.gif)
 
