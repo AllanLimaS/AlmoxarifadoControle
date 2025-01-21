@@ -18,3 +18,8 @@ pyinstaller --onefile --noconsole --add-data "storage\\\estoque.db;storage" app.
 - Criar a partir do arquivo de especificações do pyinstaller 
 pyinstaller app.spec
 
+## To Do
+
+- Ajustar para modelo MVC
+- Melhorar a persistencia de dados
+- ajustar os "views" para ficarem mais organizados como o "moviementacoes_view.py"

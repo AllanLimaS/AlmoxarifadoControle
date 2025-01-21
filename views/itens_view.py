@@ -2,27 +2,31 @@ import flet as ft
 
 from database.db_itens import *
 
+# textfields para cadastro do item 
 nome_textfield = ft.TextField(label="Nome do Item")
-qtd_textfield = ft.TextField(label="Quantidade", input_filter=ft.NumbersOnlyInputFilter())
-qtd_new_textfield = ft.TextField(label="Nova Quantidade", input_filter=ft.NumbersOnlyInputFilter())
+qtd_textfield = ft.TextField(label="Entrada", input_filter=ft.NumbersOnlyInputFilter())
 
+# textfields para alteração do item 
+entrada_new_textfield = ft.TextField(label="Alterar Entrada", input_filter=ft.NumbersOnlyInputFilter())
+saida_new_textfield = ft.TextField(label="Alterar Saída", input_filter=ft.NumbersOnlyInputFilter())
 
+# alertas / popups 
 alert = ft.AlertDialog(title=ft.Text("Item Cadastrado com Sucesso!"))
-
 alert_confirm = ft.AlertDialog(
         modal=True,
         title=ft.Text("Deletar Item"),
         actions_alignment=ft.MainAxisAlignment.END,
-        actions=[ft.TextButton("Yes", on_click=lambda e: deletar_item(e)),
-                 ft.TextButton("No", on_click=lambda e: close_confirm(e))]
+        actions=[ft.Container(content=(ft.TextButton("Sim",style=ft.ButtonStyle(color=ft.Colors.RED),
+                                                     on_click=lambda e: deletar_item(e))),
+                                                     border= ft.border.all(2,ft.Colors.RED),border_radius=15),
+                 ft.TextButton("Não", on_click=lambda e: close_confirm(e))]
     )
-
 alert_alterar = ft.AlertDialog(
         modal=True,
         title=ft.Text("Alterar estoque de Item"),
         actions_alignment=ft.MainAxisAlignment.END,
-        actions=[ft.TextButton("Yes", on_click=lambda e: alterar_item(e)),
-                 ft.TextButton("No", on_click=lambda e: close_alterar(e))]
+        actions=[ft.TextButton("Sim", on_click=lambda e: alterar_item(e)),
+                 ft.TextButton("Não", on_click=lambda e: close_alterar(e))]
     )
 
 def close_confirm(e):
@@ -36,7 +40,7 @@ def close_alterar(e):
 def alterar_item(e):
     
     try:
-        db_alterar_saldo_item(id_item_aux,qtd_new_textfield.value)
+        db_alterar_saldo_item(id_item_aux,entrada_new_textfield.value,saida_new_textfield.value)
         e.control.page.overlay.clear()
         e.control.page.overlay.append(alert)
         alert.title = ft.Text("Item alterado com Sucesso!", color=ft.Colors.GREEN)
@@ -79,23 +83,28 @@ def abrir_confirm(e,item_id,nome_item):
 
     global id_item_aux 
     id_item_aux = item_id
-    alert_confirm.content = ft.Text(f"Deseja deletar o item '{nome_item}'?")
+    alert_confirm.content = ft.Text(f"Deseja deletar o item '{nome_item}'?\n\n ATENÇÃO: Todos os movimentos relacionados a esse item serão excluídos!")
     e.control.page.overlay.clear()
     e.control.page.overlay.append(alert_confirm)
     alert_confirm.open = True
     e.control.page.update()
 
-def abrir_alterar(e,item_id,item_nome,item_qtd):
+def abrir_alterar(e,item_id,item_nome,item_entrada,item_saida):
 
     global id_item_aux 
     id_item_aux = item_id
 
-    qtd_new_textfield.value = ''
+    entrada_new_textfield.value = item_entrada
+    saida_new_textfield.value = item_saida
 
     alert_alterar.content = ft.Column(controls=[
-                                ft.Text(f"O item '{item_nome}' possui '{item_qtd}' unidades."),
-                                qtd_new_textfield],
-                                height=100)  
+                                ft.Text(f"O item '{item_nome}' possui:"),
+                                ft.Text(f"Entrada '{item_entrada}' unidades."),
+                                entrada_new_textfield,
+                                ft.Text(f"Saída '{item_saida}' unidades."),
+                                saida_new_textfield
+                                ],
+                                height=200)  
     e.control.page.overlay.clear()
     e.control.page.overlay.append(alert_alterar)
     alert_alterar.open = True
@@ -106,7 +115,9 @@ def carregar_itens():
     dataTable = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Nome")),
-            ft.DataColumn(ft.Text("Quantidade"),numeric=True),
+            ft.DataColumn(ft.Text("Entrada"),numeric=True),
+            ft.DataColumn(ft.Text("Saída"),numeric=True),
+            ft.DataColumn(ft.Text("Total"),numeric=True),
             ft.DataColumn(ft.Text("")), # espaço para o botão de alterar 
             ft.DataColumn(ft.Text("")) # espaço para o botão de excluir
         ]
@@ -119,17 +130,21 @@ def carregar_itens():
 
         item_id = item[0]  
         nome_item = item[1]  
-        quantidade = item[2]  
+        entrada = item[2]
+        saida = item[3]  
+        total = entrada - saida
 
         dataTable.rows.append(
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(nome_item)),
-                    ft.DataCell(ft.Text(quantidade)),
+                    ft.DataCell(ft.Text(entrada)),
+                    ft.DataCell(ft.Text(saida)),
+                    ft.DataCell(ft.Text(total)),
                     ft.DataCell(ft.IconButton(
                         icon=ft.Icons.CREATE,
                         tooltip="Alterar item",
-                        on_click=lambda e, item_id=item_id,nome_item = nome_item,quantidade = quantidade: abrir_alterar(e, item_id,nome_item,quantidade)
+                        on_click=lambda e, item_id=item_id,nome_item = nome_item, entrada = entrada, saida = saida: abrir_alterar(e, item_id,nome_item,entrada,saida)
                         )),
                     ft.DataCell(ft.IconButton(
                         icon=ft.Icons.DELETE_OUTLINED,

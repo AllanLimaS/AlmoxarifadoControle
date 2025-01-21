@@ -3,7 +3,7 @@ import pytz
 from datetime import datetime
 
 
-def db_adicionar_movimentacao(pessoa_id, item_id, quantidade):
+def db_adicionar_movimentacao(pessoa_id, item_id, qtd, obs):
     try:
         conn = conectar_db()
         cursor = conn.cursor()
@@ -15,10 +15,10 @@ def db_adicionar_movimentacao(pessoa_id, item_id, quantidade):
         data_formatada = data_atual.strftime("%d/%m/%Y %H:%M:%S")
 
         query = """
-        INSERT INTO movimentacoes (pessoa_id, item_id, quantidade, data)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO movimentacoes (pessoa_id, item_id, quantidade, observacao, data)
+        VALUES (?, ?, ?, ?, ?)
         """
-        cursor.execute(query, (pessoa_id, item_id, quantidade, data_formatada))
+        cursor.execute(query, (pessoa_id, item_id, qtd, obs, data_formatada))
         conn.commit()
         print("[DB] SUCESSO - Adicionar Movimentacao")
 
@@ -39,6 +39,7 @@ def db_buscar_movimentacoes():
             p.nome AS pessoa_nome,
             i.nome AS item_nome,
             m.quantidade,
+            m.observacao,
             m.data
         FROM movimentacoes m
         INNER JOIN pessoas p ON m.pessoa_id = p.id

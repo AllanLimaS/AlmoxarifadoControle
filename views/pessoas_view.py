@@ -10,8 +10,10 @@ alert_confirm = ft.AlertDialog(
         modal=True,
         title=ft.Text("Deletar Pessoa"),
         actions_alignment=ft.MainAxisAlignment.END,
-        actions=[ft.TextButton("Yes", on_click=lambda e: deletar_pessoa(e)),
-                 ft.TextButton("No", on_click=lambda e: close_confirm(e))]
+        actions=[ft.Container(content=(ft.TextButton("Sim",style=ft.ButtonStyle(color=ft.Colors.RED),
+                                                     on_click=lambda e: deletar_pessoa(e))),
+                                                     border= ft.border.all(2,ft.Colors.RED),border_radius=15),
+                 ft.TextButton("Não", on_click=lambda e: close_confirm(e))]
     )
 
 def close_confirm(e):
@@ -42,8 +44,7 @@ def abrir_confirm(e,pessoa_id,pessoa_nome):
 
     global id_pessoa_aux 
     id_pessoa_aux = pessoa_id
-    alert_confirm.content = ft.Text(f"Deseja deletar o item '{pessoa_nome}'?")
-
+    alert_confirm.content = ft.Text(f"Deseja deletar o item '{pessoa_nome}'?\n\n ATENÇÃO: Todos os movimentos relacionados a essa pessoa serão excluídos!")
     e.control.page.overlay.clear()
     e.control.page.overlay.append(alert_confirm)
     alert_confirm.open = True

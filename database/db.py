@@ -36,7 +36,9 @@ def criar_tabelas():
         CREATE TABLE IF NOT EXISTS itens (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
-            quantidade INTEGER NOT NULL
+            entrada INTEGER NOT NULL,
+            saida INTEGER NOT NULL
+                       
         );
         """)
 
@@ -55,6 +57,7 @@ def criar_tabelas():
             pessoa_id INTEGER NOT NULL,
             item_id INTEGER NOT NULL,
             quantidade INTEGER NOT NULL,
+            observacao TEXT DEFAULT NULL,
             data TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
             FOREIGN KEY (pessoa_id) REFERENCES pessoas (id),
             FOREIGN KEY (item_id) REFERENCES itens (id)

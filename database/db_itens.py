@@ -1,11 +1,11 @@
 from database.db import conectar_db
 
 # Função para adicionar item
-def db_adicionar_item(nome, quantidade):
+def db_adicionar_item(nome, qtd):
     try:
         conn = conectar_db()
         cursor  = conn.cursor()
-        cursor.execute("INSERT INTO itens (nome, quantidade) VALUES (?, ?)", (nome, quantidade))
+        cursor.execute("INSERT INTO itens (nome, entrada, saida) VALUES (?, ?, ?)", (nome, qtd, 0))
         conn.commit()
         print("[DB] SUCESSO - Adicionar Item")
     except Exception as e:
@@ -48,11 +48,11 @@ def db_diminuir_saldo_item(item_id, qtd):
         conn = conectar_db()
         cursor = conn.cursor()
         cursor.execute(
-            "UPDATE itens SET quantidade = quantidade - ? WHERE id = ? AND quantidade >= ?",
-            (qtd, item_id, qtd)
+            "UPDATE itens SET saida = saida + ? WHERE id = ?",
+            (qtd, item_id)
         )
         if cursor.rowcount == 0:
-            raise ValueError("Quantidade insuficiente para o item ou item não encontrado.")
+            raise ValueError("item não encontrado.")
         conn.commit()
         print("[DB] SUCESSO - Diminuir Saldo Item")
 
@@ -62,14 +62,21 @@ def db_diminuir_saldo_item(item_id, qtd):
     finally:
         conn.close()
 
-def db_alterar_saldo_item(item_id, qtd):
+def db_alterar_saldo_item(item_id, entrada, saida):
     try:
         conn = conectar_db()
         cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE itens SET quantidade = ? WHERE id = ?",
-            (qtd, item_id)
-        )
+
+        if entrada != '':
+            cursor.execute(
+                "UPDATE itens SET entrada = ? WHERE id = ?",
+                (entrada , item_id)
+            )
+        if saida != '':
+            cursor.execute(
+                "UPDATE itens SET saida = ? WHERE id = ?",
+                (saida , item_id)
+            )
         conn.commit()
         print("[DB] SUCESSO - Alterar Saldo Item")
 

@@ -53,7 +53,7 @@ def main(page:ft.Page):
             ft.TextButton("Movimentações", data = 'movimentacoes', on_click=AtualizarHome,icon=ft.Icons.IMPORT_EXPORT),
 
             ft.IconButton(
-                    on_click=lambda e: page.window_close(),
+                    on_click=lambda e: page.window.close(),
                     icon='CLOSE',
                     icon_color= ft.Colors.RED,
                     width= 50,
