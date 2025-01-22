@@ -1,4 +1,5 @@
 /build/
+/relatorios/    
 .vscode/
 .idea/
 venv/

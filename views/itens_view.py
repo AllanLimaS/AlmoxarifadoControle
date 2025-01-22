@@ -1,6 +1,7 @@
 import flet as ft
 
 from database.db_itens import *
+from controlls.report import gerar_relatorio_itens
 
 # textfields para cadastro do item 
 nome_textfield = ft.TextField(label="Nome do Item")
@@ -12,6 +13,7 @@ saida_new_textfield = ft.TextField(label="Alterar Saída", input_filter=ft.Numbe
 
 # alertas / popups 
 alert = ft.AlertDialog(title=ft.Text("Item Cadastrado com Sucesso!"))
+
 alert_confirm = ft.AlertDialog(
         modal=True,
         title=ft.Text("Deletar Item"),
@@ -189,6 +191,25 @@ def cadastra_item(e):
         alert.open = True
         e.control.page.update()
         
+def gerar_relatorio(e):
+    lista_itens = db_buscar_itens()
+    path_pdf = gerar_relatorio_itens(lista_itens)
+    alert.title = ft.Text(f"Relatório salvo em: {path_pdf}",color=ft.Colors.GREEN_ACCENT)
+    e.control.page.overlay.clear()
+    e.control.page.overlay.append(alert)
+    alert.open = True
+    e.control.page.update()
+
+def gerar_relatorio_simples(e):
+    lista_itens = db_buscar_itens()
+    path_pdf = gerar_relatorio_itens(lista_itens)
+    alert.title = ft.Text(f"Relatório salvo em: {path_pdf}",color=ft.Colors.GREEN_ACCENT)
+    e.control.page.overlay.clear()
+    e.control.page.overlay.append(alert)
+    alert.open = True
+    e.control.page.update()
+
+
 def itens_view():
         global gridItens
 
@@ -210,18 +231,34 @@ def itens_view():
                     )
                 ),
 
-                ft.Container(
-                    bgcolor=ft.Colors.BLACK87,
-                    padding=20,
-                    border_radius=15,
-                    content=ft.Column(
-                        controls=[
-                            ft.Text("Cadastrar Novo Item", size=24),
-                            nome_textfield,
-                            qtd_textfield,
-                            ft.ElevatedButton("Salvar", on_click=cadastra_item )
-                        ]
-                    )
+                ft.Column(
+                    controls=[
+                        ft.Container(
+                            bgcolor=ft.Colors.BLACK87,
+                            padding=20,
+                            border_radius=15,
+                            content=ft.Column(
+                                controls=[
+                                    ft.Text("Cadastrar Novo Item", size=24),
+                                    nome_textfield,
+                                    qtd_textfield,
+                                    ft.ElevatedButton("Salvar", on_click=cadastra_item )
+                                ]
+                            )
+                        ),
+                        ft.Container(
+                            bgcolor=ft.Colors.BLACK87,
+                            padding=20,
+                            border_radius=15,
+                            content=ft.Column(
+                                controls=[
+                                    ft.ElevatedButton("Gerar Relatório (PDF)", on_click=gerar_relatorio),
+                                    ft.ElevatedButton("Gerar Relatório simples (PDF)", on_click=gerar_relatorio_simples)
+                                ]
+                            )
+                        )
+                    ]
                 )
+                
             ]
         )
