@@ -1,7 +1,9 @@
 import flet as ft
 
 from database.db_itens import *
-from controlls.report import gerar_relatorio_itens
+from controlls.report import gerar_relatorio_itens, gerar_relatorio_itens_simples
+
+itens_selecionados = []
 
 # textfields para cadastro do item 
 nome_textfield = ft.TextField(label="Nome do Item")
@@ -13,6 +15,14 @@ saida_new_textfield = ft.TextField(label="Alterar Saída", input_filter=ft.Numbe
 
 # alertas / popups 
 alert = ft.AlertDialog(title=ft.Text("Item Cadastrado com Sucesso!"))
+
+def show_alert(e,title):
+    alert.title = title
+    e.control.page.overlay.clear()
+    e.control.page.overlay.append(alert)
+    alert.open = True
+    e.control.page.update()
+
 
 alert_confirm = ft.AlertDialog(
         modal=True,
@@ -43,42 +53,29 @@ def alterar_item(e):
     
     try:
         db_alterar_saldo_item(id_item_aux,entrada_new_textfield.value,saida_new_textfield.value)
-        e.control.page.overlay.clear()
-        e.control.page.overlay.append(alert)
-        alert.title = ft.Text("Item alterado com Sucesso!", color=ft.Colors.GREEN)
-        alert.open = True
+
+        show_alert(e,ft.Text("Item alterado com Sucesso!", color=ft.Colors.GREEN))
 
         # Atualiza a visualização dos itens
         e.page.main_container.content = itens_view()
         e.page.update()
     except Exception as ex:
         # Exibe uma mensagem de erro e registra o problema
-        alert.title = ft.Text(f"Erro ao alterar o item: {ex}", color=ft.Colors.RED)
-        e.control.page.overlay.clear()
-        e.control.page.overlay.append(alert)
-        alert.open = True
-        e.control.page.update()
+
+        show_alert(e,ft.Text(f"Erro ao alterar o item: {ex}", color=ft.Colors.RED))
         print(f"Erro ao deletar o item: {ex}")
 
 def deletar_item(e):
 
     try:
         db_deletar_item(id_item_aux)  # Tenta deletar o item do banco de dados
-        e.control.page.overlay.clear()
-        e.control.page.overlay.append(alert)
-        alert.title = ft.Text("Item Deletado com Sucesso!", color=ft.Colors.GREEN)
-        alert.open = True
+        show_alert(e,ft.Text("Item Deletado com Sucesso!", color=ft.Colors.GREEN))
 
-        # Atualiza a visualização dos itens
         e.page.main_container.content = itens_view()
         e.page.update()
     except Exception as ex:
         # Exibe uma mensagem de erro e registra o problema
-        alert.title = ft.Text(f"Erro ao deletar o item: {ex}", color=ft.Colors.RED)
-        e.control.page.overlay.clear()
-        e.control.page.overlay.append(alert)
-        alert.open = True
-        e.control.page.update()
+        show_alert(e,ft.Text(f"Erro ao deletar o item: {ex}", color=ft.Colors.RED))
         print(f"Erro ao deletar o item: {ex}")
 
 def abrir_confirm(e,item_id,nome_item):
@@ -112,10 +109,22 @@ def abrir_alterar(e,item_id,item_nome,item_entrada,item_saida):
     alert_alterar.open = True
     e.control.page.update()
 
+def seleciona_item(e, item_nome):
+    if e.control.value:  # Checkbox marcado
+        if item_nome not in itens_selecionados:
+            itens_selecionados.append(item_nome)
+    else:  # Checkbox desmarcado
+        if item_nome in itens_selecionados:
+            itens_selecionados.remove(item_nome)
+
+    print("Itens selecionados:", itens_selecionados)
+
+
 def carregar_itens():
 
     dataTable = ft.DataTable(
         columns=[
+            ft.DataColumn(ft.Text("")),
             ft.DataColumn(ft.Text("Nome")),
             ft.DataColumn(ft.Text("Entrada"),numeric=True),
             ft.DataColumn(ft.Text("Saída"),numeric=True),
@@ -139,6 +148,7 @@ def carregar_itens():
         dataTable.rows.append(
             ft.DataRow(
                 cells=[
+                    ft.DataCell(ft.Checkbox("",value=False,on_change= lambda e, item_nome = nome_item: seleciona_item(e,item_nome))),
                     ft.DataCell(ft.Text(nome_item)),
                     ft.DataCell(ft.Text(entrada)),
                     ft.DataCell(ft.Text(saida)),
@@ -157,8 +167,6 @@ def carregar_itens():
             )
         )
 
-
-
     gridItens = ft.Column(
         controls=[dataTable],
         scroll=ft.ScrollMode.AUTO,  # Permite scroll
@@ -175,39 +183,29 @@ def cadastra_item(e):
         nome_textfield.value = ''
         qtd_textfield.value = ''
 
-        alert.title = ft.Text("Item Cadastrado com Sucesso!", color=ft.Colors.GREEN)
-        e.control.page.overlay.clear()
-        e.control.page.overlay.append(alert)
-        alert.open = True
+        show_alert(e,ft.Text("Item Cadastrado com Sucesso!", color=ft.Colors.GREEN))
 
         e.page.main_container.content = itens_view()
         e.page.update()
 
     else:
+        show_alert(e,ft.Text("Necessário preencher corretamente os campos!",color=ft.Colors.RED))
 
-        alert.title = ft.Text("Necessário preencher corretamente os campos!",color=ft.Colors.RED)
-        e.control.page.overlay.clear()
-        e.control.page.overlay.append(alert)
-        alert.open = True
-        e.control.page.update()
         
 def gerar_relatorio(e):
     lista_itens = db_buscar_itens()
     path_pdf = gerar_relatorio_itens(lista_itens)
-    alert.title = ft.Text(f"Relatório salvo em: {path_pdf}",color=ft.Colors.GREEN_ACCENT)
-    e.control.page.overlay.clear()
-    e.control.page.overlay.append(alert)
-    alert.open = True
-    e.control.page.update()
+    show_alert(e,ft.Text(f"Relatório salvo em: {path_pdf}",color=ft.Colors.GREEN_ACCENT))
 
 def gerar_relatorio_simples(e):
     lista_itens = db_buscar_itens()
-    path_pdf = gerar_relatorio_itens(lista_itens)
-    alert.title = ft.Text(f"Relatório salvo em: {path_pdf}",color=ft.Colors.GREEN_ACCENT)
-    e.control.page.overlay.clear()
-    e.control.page.overlay.append(alert)
-    alert.open = True
-    e.control.page.update()
+    nomes_itens = [item[1] for item in lista_itens]
+    path_pdf = gerar_relatorio_itens_simples(nomes_itens)
+    show_alert(e,ft.Text(f"Relatório salvo em: {path_pdf}",color=ft.Colors.GREEN_ACCENT))
+
+def gerar_relatorio_selecionados(e):
+    path_pdf = gerar_relatorio_itens_simples(itens_selecionados)
+    show_alert(e,ft.Text(f"Relatório salvo em: {path_pdf}",color=ft.Colors.GREEN_ACCENT))
 
 
 def itens_view():
@@ -252,9 +250,12 @@ def itens_view():
                             border_radius=15,
                             content=ft.Column(
                                 controls=[
-                                    ft.ElevatedButton("Gerar Relatório (PDF)", on_click=gerar_relatorio),
-                                    ft.ElevatedButton("Gerar Relatório simples (PDF)", on_click=gerar_relatorio_simples)
-                                ]
+                                    ft.Text("Relatórios em PDF",size=16,weight=ft.FontWeight.W_500),
+                                    ft.ElevatedButton("Gerar Completo", on_click=gerar_relatorio, tooltip="Relatório contendo os itens e suas quantidades"),
+                                    ft.ElevatedButton("Gerar Simples", on_click=gerar_relatorio_simples,tooltip="Relatório apenas com o nome dos itens e uma coluna em branco ao lado"),
+                                    ft.ElevatedButton("Gerar Simples (Selecionados)", on_click=gerar_relatorio_selecionados,tooltip="Relatório apenas com o nome dos itens e uma coluna em branco ao lado, apenas os itens marcados")
+                                ],
+                                spacing=20
                             )
                         )
                     ]

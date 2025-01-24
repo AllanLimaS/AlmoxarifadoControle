@@ -39,15 +39,15 @@ def gerar_relatorio_itens_simples(lista):
 
     # Cabeçalhos da tabela
     pdf.set_font("Arial", style="B", size=12)
-    pdf.cell(100, 10, "Nome do Item", border=1, align="C")
-    pdf.cell(50, 10, " ", border=1, align="C")
+    pdf.cell(100, 10, "Item", border=1, align="C")
+    pdf.cell(90, 10, " ", border=1, align="C")
     pdf.ln()  # Próxima linha
 
     # Dados da tabela
     pdf.set_font("Arial", size=12)
     for item in lista:
-        pdf.cell(100, 10, item[1], border=1, align="C")
-        pdf.cell(50, 10, "", border=1, align="C")
+        pdf.cell(100, 10, item, border=1, align="C")
+        pdf.cell(90, 10, "", border=1, align="C")
         pdf.ln()
 
     # Salvar o PDF na pasta de relatórios
@@ -87,7 +87,7 @@ def gerar_relatorio_itens(lista):
 
     # Cabeçalhos da tabela
     pdf.set_font("Arial", style="B", size=12)
-    pdf.cell(100, 10, "Nome do Item", border=1, align="C")
+    pdf.cell(100, 10, "Item", border=1, align="C")
     pdf.cell(30, 10, "Entrada", border=1, align="C")
     pdf.cell(30, 10, "Saída", border=1, align="C")
     pdf.cell(30, 10, "Total", border=1, align="C")
