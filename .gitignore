@@ -1,5 +1,10 @@
 /build/
+/app.build/
+/app.dist/
+/app.onefile-build/
 /relatorios/    
+/dist/
+nuitka-crash*
 .vscode/
 .idea/
 venv/
