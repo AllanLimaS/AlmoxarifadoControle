@@ -10,8 +10,8 @@ Aplicativo simples de controle de almoxarifado produzido por conta de dois objet
 ![Demonstração](https://github.com/AllanLimaS/AlmoxarifadoControle/blob/master/assets/demonstracao_gif.gif)
 
 - CRUD de item.
-- CRuD de pessoa.
-- CRud de movimentação de item por pessoa. (saída de item) 
+- CRUD de pessoa.
+- CRuD de movimentação de item por pessoa. (saída de item) 
 - Impressão de relatório de itens
 - Autenticação de usuário (apenas um) para acessar o aplicativo
 
@@ -43,7 +43,7 @@ O PyInstaller gera o executável rapidamente, mas ao distribuí-lo, frequentemen
 
 O Flet utiliza o PyInstaller internamente, portanto apresenta os mesmos problemas com antivírus.
 
-`flet pack app.py --name 'Controle de Estoque v1.2' --icon assets\box.ico --product-name 'Controle de Estoque' --product-version 1.2 --copyright 'AllanLimaS 2025'`
+`flet pack app.py --name 'Controle de Estoque v1.3' --icon assets\box.ico --product-name 'Controle de Estoque' --product-version 1.3 --copyright 'AllanLimaS 2025'`
 
 ### Nuitka
 

@@ -41,7 +41,8 @@ def db_buscar_movimentacoes(filtro_pessoa=0, filtro_item=0):
             i.nome AS item_nome,
             m.quantidade,
             m.observacao,
-            m.data
+            m.data,
+            i.id
         FROM movimentacoes m
         INNER JOIN pessoas p ON m.pessoa_id = p.id
         INNER JOIN itens i ON m.item_id = i.id
@@ -64,5 +65,19 @@ def db_buscar_movimentacoes(filtro_pessoa=0, filtro_item=0):
     except Exception as e:
         print("[DB] ERRO - Buscar movimentacoes:", e)
         return []
+    finally:
+        conn.close()
+
+
+# Função para deletar movimentação
+def db_deletar_movimentacao(mov_id):
+    try:
+        conn = conectar_db()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM movimentacoes WHERE id = ?", (mov_id,))
+        conn.commit()
+        print("[DB] SUCESSO - Deletar Movimentacao")
+    except Exception as e:
+        print("[DB] ERRO - Deletar Movimentacao:", e)
     finally:
         conn.close()

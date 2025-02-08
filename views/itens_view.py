@@ -10,6 +10,7 @@ nome_textfield = ft.TextField(label="Nome do Item")
 qtd_textfield = ft.TextField(label="Entrada", input_filter=ft.NumbersOnlyInputFilter())
 
 # textfields para alteração do item 
+nome_new_textfield = ft.TextField(label="Alterar Nome")
 entrada_new_textfield = ft.TextField(label="Alterar Entrada", input_filter=ft.NumbersOnlyInputFilter())
 saida_new_textfield = ft.TextField(label="Alterar Saída", input_filter=ft.NumbersOnlyInputFilter())
 
@@ -52,7 +53,7 @@ def close_alterar(e):
 def alterar_item(e):
     
     try:
-        db_alterar_saldo_item(id_item_aux,entrada_new_textfield.value,saida_new_textfield.value)
+        db_alterar_saldo_item(id_item_aux,nome_new_textfield.value,entrada_new_textfield.value,saida_new_textfield.value)
 
         show_alert(e,ft.Text("Item alterado com Sucesso!", color=ft.Colors.GREEN))
 
@@ -93,17 +94,19 @@ def abrir_alterar(e,item_id,item_nome,item_entrada,item_saida):
     global id_item_aux 
     id_item_aux = item_id
 
+    nome_new_textfield.value = item_nome
     entrada_new_textfield.value = item_entrada
     saida_new_textfield.value = item_saida
 
     alert_alterar.content = ft.Column(controls=[
                                 ft.Text(f"O item '{item_nome}' possui:"),
+                                nome_new_textfield,
                                 ft.Text(f"Entrada '{item_entrada}' unidades."),
                                 entrada_new_textfield,
                                 ft.Text(f"Saída '{item_saida}' unidades."),
                                 saida_new_textfield
                                 ],
-                                height=200)  
+                                height=250)  
     e.control.page.overlay.clear()
     e.control.page.overlay.append(alert_alterar)
     alert_alterar.open = True

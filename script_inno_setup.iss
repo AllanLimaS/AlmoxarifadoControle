@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Controle de Estoque"
-#define MyAppVersion "1.2"
+#define MyAppVersion "1.3"
 #define MyAppPublisher "Allan de Lima da Silva"
 #define MyAppURL "https://github.com/AllanLimaS/AlmoxarifadoControle"
 #define MyAppExeName "Controle de Estoque.exe"
@@ -33,7 +33,7 @@ DisableProgramGroupPage=yes
 ; Remove the following line to run in administrative install mode (install for all users).
 PrivilegesRequired=lowest
 OutputDir=C:\Users\allan\OneDrive\Área de Trabalho
-OutputBaseFilename=Controle_de_Estoque_setup
+OutputBaseFilename=Controle_de_Estoque_{#MyAppVersion}_setup
 SolidCompression=yes
 WizardStyle=modern
 

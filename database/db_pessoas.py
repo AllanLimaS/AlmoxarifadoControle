@@ -29,6 +29,25 @@ def db_buscar_pessoas():
     finally: 
         conn.close()
 
+def db_alterar_pessoa(pessoa_id, nome):
+    try:
+        conn = conectar_db()
+        cursor = conn.cursor()
+
+        cursor.execute(
+                "UPDATE pessoas SET nome = ? WHERE id = ?",
+                (nome , pessoa_id)
+            )
+
+        conn.commit()
+        print("[DB] SUCESSO - Alterar Saldo Item")
+
+    except Exception as e:
+        print(f"[DB] ERRO - Alterar Saldo Item: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
 # Função para deletar pessoa
 def db_deletar_pessoa(pessoa_id):
     try:

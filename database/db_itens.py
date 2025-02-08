@@ -62,10 +62,35 @@ def db_diminuir_saldo_item(item_id, qtd):
     finally:
         conn.close()
 
-def db_alterar_saldo_item(item_id, entrada, saida):
+def db_retornar_saldo_item(item_id, qtd):
     try:
         conn = conectar_db()
         cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE itens SET saida = saida - ? WHERE id = ?",
+            (qtd, item_id)
+        )
+        if cursor.rowcount == 0:
+            raise ValueError("item não encontrado.")
+        conn.commit()
+        print("[DB] SUCESSO - Retornar Saldo Item")
+
+    except Exception as e:
+        print(f"[DB] ERRO - Retornar Saldo Item: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+def db_alterar_saldo_item(item_id, nome, entrada, saida):
+    try:
+        conn = conectar_db()
+        cursor = conn.cursor()
+
+        if nome != '':
+            cursor.execute(
+                "UPDATE itens SET nome = ? WHERE id = ?",
+                (nome , item_id)
+            )
 
         if entrada != '':
             cursor.execute(

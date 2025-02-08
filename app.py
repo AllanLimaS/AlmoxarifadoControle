@@ -1,4 +1,5 @@
 import flet as ft
+import os
 
 from database.db import criar_tabelas
 
@@ -20,7 +21,9 @@ def main(page:ft.Page):
         border_radius=15,
         alignment=ft.alignment.center
     )
-    page.title = 'Controle de Estoque'
+    page.title = 'Controle de Estoque v1.3'
+    icon_path = os.path.abspath("assets/box.ico")
+    page.window.icon = icon_path
     page.window.maximized = True
     page.padding = 0 
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
@@ -74,4 +77,4 @@ def main(page:ft.Page):
     )
 
 if __name__ == '__main__':
-    ft.app(target=main)
+    ft.app(target=main,assets_dir="assets")

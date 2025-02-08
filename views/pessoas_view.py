@@ -4,6 +4,9 @@ from database.db_pessoas import *
 
 nome_textfield = ft.TextField(label="Nome da Pessoa")
 
+# textfields para alteração do usuario 
+nome_new_textfield = ft.TextField(label="Alterar Nome")
+
 alert = ft.AlertDialog(title=ft.Text("Pessoa Cadastrado com Sucesso!"))
 
 alert_confirm = ft.AlertDialog(
@@ -15,29 +18,73 @@ alert_confirm = ft.AlertDialog(
                                                      border= ft.border.all(2,ft.Colors.RED),border_radius=15),
                  ft.TextButton("Não", on_click=lambda e: close_confirm(e))]
     )
+alert_alterar = ft.AlertDialog(
+        modal=True,
+        title=ft.Text("Alterar nome de pessoa"),
+        actions_alignment=ft.MainAxisAlignment.END,
+        actions=[ft.TextButton("Sim", on_click=lambda e: alterar_item(e)),
+                 ft.TextButton("Não", on_click=lambda e: close_alterar(e))]
+    )
+
+def show_alert(e,title):
+    alert.title = title
+    e.control.page.overlay.clear()
+    e.control.page.overlay.append(alert)
+    alert.open = True
+    e.control.page.update()
 
 def close_confirm(e):
     alert_confirm.open = False
     e.control.page.update()
 
-def deletar_pessoa(e):
+def close_alterar(e):
+    alert_alterar.open = False
+    e.control.page.update()
+
+def alterar_item(e):
+    
     try:
-        db_deletar_pessoa(id_pessoa_aux)  # Tenta deletar o item do banco de dados
-        e.control.page.overlay.clear()
-        e.control.page.overlay.append(alert)
-        alert.title = ft.Text("pessoa Deletado com Sucesso!", color=ft.Colors.GREEN)
-        alert.open = True
+        db_alterar_pessoa(pessoa_id_aux,nome_new_textfield.value)
+
+        show_alert(e,ft.Text("Pessoa alterada com Sucesso!", color=ft.Colors.GREEN))
 
         # Atualiza a visualização dos itens
         e.page.main_container.content = pessoas_view()
         e.page.update()
     except Exception as ex:
         # Exibe uma mensagem de erro e registra o problema
-        alert.title = ft.Text(f"Erro ao deletar a pessoa: {ex}", color=ft.Colors.RED)
-        e.control.page.overlay.clear()
-        e.control.page.overlay.append(alert)
-        alert.open = True
-        e.control.page.update()
+
+        show_alert(e,ft.Text(f"Erro ao alterar a pessoa: {ex}", color=ft.Colors.RED))
+        print(f"Erro ao alterar a pessoa: {ex}")
+
+def abrir_alterar(e,pessoa_id,pessoa_nome):
+
+    global pessoa_id_aux 
+    pessoa_id_aux = pessoa_id
+
+    nome_new_textfield.value = pessoa_nome
+
+    alert_alterar.content = ft.Column(controls=[
+                                ft.Text(f"Alterar o nome da pessoa: '{pessoa_nome}'"),
+                                nome_new_textfield,
+                                ],
+                                height=100)  
+    e.control.page.overlay.clear()
+    e.control.page.overlay.append(alert_alterar)
+    alert_alterar.open = True
+    e.control.page.update()
+
+def deletar_pessoa(e):
+    try:
+        db_deletar_pessoa(id_pessoa_aux)  # Tenta deletar o item do banco de dados
+        show_alert(e,ft.Text("Pessoa Deletado com Sucesso!", color=ft.Colors.GREEN))
+
+        # Atualiza a visualização dos itens
+        e.page.main_container.content = pessoas_view()
+        e.page.update()
+    except Exception as ex:
+        # Exibe uma mensagem de erro e registra o problema
+        show_alert(e,ft.Text(f"Erro ao deletar a pessoa: {ex}", color=ft.Colors.GREEN))
         print(f"Erro ao deletar a pessoa: {ex}")  # Ou use um sistema de logs
 
 def abrir_confirm(e,pessoa_id,pessoa_nome):
@@ -55,6 +102,7 @@ def carregar_pessoas():
     dataTable = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("Nome")),
+            ft.DataColumn(ft.Text("")),
             ft.DataColumn(ft.Text(""))
         ]
     )
@@ -71,6 +119,11 @@ def carregar_pessoas():
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(pessoa_nome)),
+                    ft.DataCell(ft.IconButton(
+                        icon=ft.Icons.CREATE,
+                        tooltip="Alterar item",
+                        on_click=lambda e, pessoa_id=pessoa_id,pessoa_nome = pessoa_nome: abrir_alterar(e, pessoa_id,pessoa_nome)
+                        )),
                     ft.DataCell(ft.IconButton(
                         icon=ft.Icons.DELETE_OUTLINED,
                         tooltip="Deletar pessoa",
